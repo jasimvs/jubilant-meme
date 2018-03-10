@@ -4,6 +4,7 @@ import { Sidebar } from "./containers/Sidebar"
 import { ChannelsSidebar } from "./containers/ChannelsSidebar"
 import { MessagesList } from "./containers/MessagesList"
 import { AddMessage } from "./containers/AddMessage"
+import { CreateChannel } from "./containers/CreateChannel"
 
 class App extends Component {
   render() {
@@ -13,12 +14,15 @@ class App extends Component {
       <div id="container">
         <section id="side">
           <Sidebar />
-          <ChannelsSidebar />
         </section>
         <section id="main">
           <MessagesList />
           <AddMessage username={username}/>
         </section>
+          <section id="side-2">
+              <CreateChannel />
+              <ChannelsSidebar />
+          </section>
       </div>
     );
   }

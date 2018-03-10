@@ -5,7 +5,8 @@ const ChannelsSidebar = ({ channels }) => (
     <aside id="sidebar" className="sidebar">
         <h2>Channels</h2>
         <ul>
-            {channels.map(channel => (
+            {console.log('3ChannelsSidebar')}
+            {console.log(channels)}{channels.map(channel => (
                 <li key={channel.id}>{channel.name}</li>
             ))}
         </ul>
@@ -15,7 +16,6 @@ const ChannelsSidebar = ({ channels }) => (
 ChannelsSidebar.propTypes = {
     channels: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.number.isRequired,
             name: PropTypes.string.isRequired,
         }).isRequired
     ).isRequired

@@ -52,7 +52,7 @@ const addUser = (data, ws) => {
 
   unicast({
     type: CHANNELS_LIST,
-    channels: channels.filter(ch => ch.users.includes(data.name))
+    channels: Array.from(channels.keys())
   }, ws)
 
 }
@@ -75,8 +75,8 @@ const sendUsers = (data, ws) => {
 
 const sendChannels = (data, ws) => {
   console.log( Array.from(channels.keys()))
-  let index = 0
-  unicast({type: CHANNELS_LIST, channels: Array.from(channels.keys()).map(ch => ({ name: ch, id: index++ }) )}, ws)
+  let id = 0
+  unicast({type: CHANNELS_LIST, channels: Array.from(channels.keys()).map(ch => ({name: ch, id: id++})) }, ws)
 }
 
 const viewChannel = (data, ws) => {
@@ -84,12 +84,13 @@ const viewChannel = (data, ws) => {
 }
 
 const createChannel = (data, ws) => {
-  let chUsers = data.users === undefined ? Immutable.List[data.author] : Immutable.List(data.users)
-  channels = channels.set(data.channel, {users: chUsers, messages: []})
-  viewChannel(data, ws)
+  console.log('create '+ data.name)
+  let ch = channels.get(data.name, {users: Immutable.List(data.author), messages: Immutable.List()})
+  channels = channels.set(data.name, ch)
+  let id = 0
   broadcast({
     type: CHANNELS_LIST,
-    channels: Array.from(channels.keys())
+    channels: Array.from(channels.keys()).map(ch => ({name: ch, id: id++}))
   }, '')
 }
 

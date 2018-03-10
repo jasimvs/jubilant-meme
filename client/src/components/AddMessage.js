@@ -7,6 +7,7 @@ const AddMessage = (props) => {
 
   return (
     <section id="new-message">
+      <h6>Enter message here:</h6>
       <input
         onKeyPress={(e) => {
         if (e.key === 'Enter') {

@@ -2,8 +2,8 @@ import { takeEvery } from 'redux-saga/effects'
 import * as types from '../constants/ActionTypes'
 
 const handleNewMessage = function* handleNewMessage(params) {
-  console.log('handleNewMessage' + params)
   yield takeEvery(types.ADD_MESSAGE, (action) => {
+    console.log('handleNewMessage' + action)
     action.author = params.username
     params.socket.send(JSON.stringify(action))
   })
