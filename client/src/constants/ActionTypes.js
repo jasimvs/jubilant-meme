@@ -1,0 +1,9 @@
+
+export const ADD_MESSAGE = 'ADD_MESSAGE'
+export const MESSAGE_RECEIVED = 'MESSAGE_RECEIVED'
+export const ADD_USER = 'ADD_USER'
+export const USERS_LIST = 'USERS_LIST'
+export const CHANNELS_LIST = 'CHANNELS_LIST'
+export const VIEW_CHANNEL = 'VIEW_CHANNEL'
+export const CREATE_CHANNEL = 'CREATE_CHANNEL'
+export const JOIN_CHANNEL = 'JOIN_CHANNEL'

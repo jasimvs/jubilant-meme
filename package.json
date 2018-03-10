@@ -1,0 +1,19 @@
+{
+  "name": "chatter",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "install": "(cd client && yarn)",
+    "start": "concurrently \"cd client && yarn start\" \"node server.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jasim",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^3.5.1",
+    "immutable": "^3.8.2",
+    "scala-like-option": "^1.0.3",
+    "ws": "^5.0.0"
+  }
+}

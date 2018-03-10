@@ -1,0 +1,21 @@
+{
+  "name": "chatter",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "immutable": "^3.8.2",
+    "option": "^0.2.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
+    "react-scripts": "1.1.1",
+    "redux": "^3.7.2",
+    "redux-saga": "^0.16.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
