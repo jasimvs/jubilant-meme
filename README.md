@@ -8,3 +8,6 @@ To run:
 ```yarn install```
 
 ```yarn start```
+
+Launch http://localhost:3000/ in browser
+
