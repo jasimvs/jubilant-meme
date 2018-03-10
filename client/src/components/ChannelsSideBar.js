@@ -6,7 +6,7 @@ const ChannelsSidebar = ({ channels }) => (
         <h2>Channels</h2>
         <ul>
             {channels.map(channel => (
-                <li>{channel.name}</li>
+                <li key={channel.id}>{channel.name}</li>
             ))}
         </ul>
     </aside>

@@ -1,11 +1,13 @@
 import * as types from '../constants/ActionTypes'
 
-const channels = (state = ['general'], action) => {
+const channels = (state = [], action) => {
   switch (action.type) {
     case types.CREATE_CHANNEL:
-      return state.concat([{ name: action.name, id: action.id }])
+      return state.concat([{ name: action.name, id: (state.length) }])
     case types.VIEW_CHANNEL:
-      return action.channels
+      return state
+    case types.CHANNELS_LIST:
+      return state.concat(action.channels)
     default:
       return state
   }

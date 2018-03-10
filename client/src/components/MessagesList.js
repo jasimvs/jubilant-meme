@@ -2,11 +2,11 @@ import React from "react"
 import PropTypes from "prop-types"
 import Message from "./Message"
 
-const MessagesList = ({ channel, messages }) => (
+const MessagesList = (data) => (
   <section id="messages-list">
-    <h2>{channel}</h2>
+    <h2>{data.channel}</h2>
     <ul>
-    {messages.map(message => (
+    {data.messages.map(message => (
       <Message
       key={message.id}
       {...message}
@@ -22,7 +22,8 @@ MessagesList.propTypes = {
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       message: PropTypes.string.isRequired,
-      author: PropTypes.string.isRequired
+      author: PropTypes.string.isRequired,
+      channel: PropTypes.string.isRequired
     }).isRequired
   ).isRequired
 }

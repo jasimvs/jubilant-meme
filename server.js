@@ -9,7 +9,7 @@ let users = new Immutable.Map([])
 
 // Map[channel, {users, messages}]
 let channels = new Immutable.Map({'general': {users: Immutable.List(), messages: Immutable.List()},
-    'chat-room': {users: Immutable.List(), messages: Immutable.List()}})
+    'react': {users: Immutable.List(), messages: Immutable.List()}})
 
 //Map[socket, user]
 let sockets = new Immutable.Map([])
@@ -39,13 +39,15 @@ const addUser = (data, ws) => {
   let existingChannels = users.get(data.name)
   let subscribedChannels = existingChannels === undefined ? Immutable.List : existingChannels
   let opt = Option.Option(ws)
-  users = users.set(data.name, {socket: opt, channels: subscribedChannels})
-  sockets = sockets.set(ws, data.name)
-  // let index = users.length
-    console.log(users)
+  if (data.name !== null) {
+    users = users.set(data.name, {socket: opt, channels: subscribedChannels})
+    sockets = sockets.set(ws, data.name)
+  }
+  let index = 0
+  console.log(users)
   broadcast({
         type: USERS_LIST,
-        users: Array.from(users.keys()).map(user => ({ name: user}))
+        users: Array.from(users.keys()).map(user => ({ id: index++ , name: user}))
     }, '')
 
   unicast({
@@ -59,8 +61,10 @@ const addMessage = (data, ws) => {
   console.log(data.channel)
   let currentUsersAndMessages = channels.get(data.channel)
   let usersAndMessages = currentUsersAndMessages === undefined ?
-      { users: Immutable.List(), messages: Immutable.List() } : { users: currentUsersAndMessages.users,
-          messages: currentUsersAndMessages.messages.push({ message: data.message, author: data.author }) }
+      { users: Immutable.List(), messages: Immutable.List(), channel: data.channel} :
+      { users: currentUsersAndMessages.users,
+        messages: currentUsersAndMessages.messages.push({ message: data.message, author: data.author }),
+        channel: data.channel}
   channels = channels.set(data.channel, usersAndMessages)
   broadcast(data, ws)
 }
@@ -70,7 +74,9 @@ const sendUsers = (data, ws) => {
 }
 
 const sendChannels = (data, ws) => {
-  unicast({type: CHANNELS_LIST, channels: Array.from(channels.keys())}, ws)
+  console.log( Array.from(channels.keys()))
+  let index = 0
+  unicast({type: CHANNELS_LIST, channels: Array.from(channels.keys()).map(ch => ({ name: ch, id: index++ }) )}, ws)
 }
 
 const viewChannel = (data, ws) => {
