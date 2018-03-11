@@ -12,6 +12,10 @@ const setupSocket = (dispatch, username) => {
     socket.send(JSON.stringify({
         type: types.CHANNELS_LIST
     }))
+    socket.send(JSON.stringify({
+        type: types.VIEW_CHANNEL,
+        channel: 'general'
+    }))
   }
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data)
@@ -30,7 +34,7 @@ const setupSocket = (dispatch, username) => {
         dispatch(populateChannelsList(data.channels))
         break
       case types.VIEW_CHANNEL:
-        dispatch(viewChannel(data.name))
+        dispatch(viewChannel(data.name, data.messages))
         break
       case types.CREATE_CHANNEL:
         dispatch(createChannel(data.author, data.name))

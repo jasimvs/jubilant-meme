@@ -8,8 +8,10 @@ const wss = new WebSocket.Server({ port: 8989 })
 let users = new Immutable.Map([])
 
 // Map[channel, {users, messages}]
-let channels = new Immutable.Map({'general': {users: Immutable.List(), messages: Immutable.List()},
-    'react': {users: Immutable.List(), messages: Immutable.List()}})
+let channels = new Immutable.Map([
+    ['general', {users: Immutable.List(), messages: Immutable.List()}],
+    ['react', {users: Immutable.List(), messages: Immutable.List()}]
+])
 
 //Map[socket, user]
 let sockets = new Immutable.Map([])
@@ -61,10 +63,9 @@ const addMessage = (data, ws) => {
   console.log(data.channel)
   let currentUsersAndMessages = channels.get(data.channel)
   let usersAndMessages = currentUsersAndMessages === undefined ?
-      { users: Immutable.List(), messages: Immutable.List(), channel: data.channel} :
+      { users: Immutable.List(), messages: Immutable.List()} :
       { users: currentUsersAndMessages.users,
-        messages: currentUsersAndMessages.messages.push({ message: data.message, author: data.author }),
-        channel: data.channel}
+        messages: currentUsersAndMessages.messages.push({ message: data.message, author: data.author })}
   channels = channels.set(data.channel, usersAndMessages)
   broadcast(data, ws)
 }
@@ -80,7 +81,13 @@ const sendChannels = (data, ws) => {
 }
 
 const viewChannel = (data, ws) => {
-  unicast({type: VIEW_CHANNEL, channel: channels.get(data.channel)}, ws)
+  console.log(VIEW_CHANNEL)
+  console.log(data)
+  console.log(channels)
+  console.log(channels.get(data.channel))
+  console.log(channels.get(data.channel).messages)
+  console.log(Array.from(channels.get(data.channel).messages))
+  unicast({type: VIEW_CHANNEL, messages: Array.from(channels.get(data.channel).messages), name: data.channel}, ws)
 }
 
 const createChannel = (data, ws) => {

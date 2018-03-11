@@ -25,9 +25,10 @@ export const joinChannel = (author, name) => ({
     author
 })
 
-export const viewChannel = (name) => ({
+export const viewChannel = (channelName, messages) => ({
   type: types.VIEW_CHANNEL,
-  name
+  name: channelName,
+  messages: messages
 })
 
 export const addUser = name => ({
