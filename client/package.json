@@ -19,6 +19,11 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "jest": "^22.4.2"
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "jest": "^22.4.2",
+    "babel-jest": "^23.0.0-alpha.0",
+    "jest-environment-jsdom": "^23.0.0-alpha.0",
+    "react-test-renderer": "^16.2.0"
   }
 }

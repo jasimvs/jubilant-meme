@@ -9,8 +9,7 @@ import './index.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import reducers from './reducers'
-import handleNewMessage from './sagas'
-import handleNewChannel from './sagas/newChannel'
+import { handleNewMessage, handleNewChannel, handleChannelChange } from './sagas'
 import setupSocket from './sockets'
 
 const username = prompt("Enter name");
@@ -27,6 +26,7 @@ const socket = setupSocket(store.dispatch, username)
 
 sagaMiddleware.run(handleNewMessage, { socket, username })
 sagaMiddleware.run(handleNewChannel, { socket, username })
+sagaMiddleware.run(handleChannelChange, { socket, username })
 
 
 ReactDOM.render(

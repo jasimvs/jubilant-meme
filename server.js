@@ -7,10 +7,11 @@ const wss = new WebSocket.Server({ port: 8989 })
 // Map[user, {Option(socket), channels}]
 let users = new Immutable.Map([])
 
+const beginningOfChanel = (name) => ({ message: 'beginning of '+ name + ' :', author: '' })
 // Map[channel, {users, messages}]
 let channels = new Immutable.Map([
-    ['general', {users: Immutable.List(), messages: Immutable.List()}],
-    ['react', {users: Immutable.List(), messages: Immutable.List()}]
+    ['general', {users: Immutable.List(), messages: Immutable.List([beginningOfChanel('general')])}],
+    ['react', {users: Immutable.List(), messages: Immutable.List([beginningOfChanel('react')])}]
 ])
 
 //Map[socket, user]
@@ -63,7 +64,8 @@ const addMessage = (data, ws) => {
   console.log(data.channel)
   let currentUsersAndMessages = channels.get(data.channel)
   let usersAndMessages = currentUsersAndMessages === undefined ?
-      { users: Immutable.List(), messages: Immutable.List()} :
+      { users: Immutable.List(data.author), messages:
+          Immutable.List([beginningOfChanel(data.channel), { message: data.message, author: data.author }])} :
       { users: currentUsersAndMessages.users,
         messages: currentUsersAndMessages.messages.push({ message: data.message, author: data.author })}
   channels = channels.set(data.channel, usersAndMessages)
@@ -84,15 +86,14 @@ const viewChannel = (data, ws) => {
   console.log(VIEW_CHANNEL)
   console.log(data)
   console.log(channels)
-  console.log(channels.get(data.channel))
-  console.log(channels.get(data.channel).messages)
-  console.log(Array.from(channels.get(data.channel).messages))
-  unicast({type: VIEW_CHANNEL, messages: Array.from(channels.get(data.channel).messages), name: data.channel}, ws)
+    console.log(Array.from(channels.get(data.channel).messages))
+    unicast({type: VIEW_CHANNEL, messages: Array.from(channels.get(data.channel).messages), name: data.channel}, ws)
 }
 
 const createChannel = (data, ws) => {
   console.log('create '+ data.name)
-  let ch = channels.get(data.name, {users: Immutable.List(data.author), messages: Immutable.List()})
+  let ch = channels.get(data.name, {users: Immutable.List(data.author),
+    messages: Immutable.List([beginningOfChanel(data.name)])})
   channels = channels.set(data.name, ch)
   let id = 0
   broadcast({
@@ -102,6 +103,7 @@ const createChannel = (data, ws) => {
 }
 
 const joinChannel = (data, ws) => {
+  console.log(data)
   let channel = channels.get(data.channel)
   channels = channels.set(data.channel, {users: channel.users.push(data.author), messages: channel.messages})
   let user = users.get(data.author)

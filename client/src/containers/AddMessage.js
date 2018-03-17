@@ -8,4 +8,4 @@ const mapDispatchToProps = dispatch => ({
   }
 })
 
-export const AddMessage = connect(() => ({}), mapDispatchToProps)(AddMessageComponent)
+export const AddMessage = connect((state) => ({channel: state.channel}), mapDispatchToProps)(AddMessageComponent)

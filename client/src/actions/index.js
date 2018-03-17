@@ -25,9 +25,14 @@ export const joinChannel = (author, name) => ({
     author
 })
 
+export const requestChannelMessages = (channelName) => ({
+  type: types.REQUEST_CHANNEL_MESSAGES,
+  name: channelName
+})
+
 export const viewChannel = (channelName, messages) => ({
   type: types.VIEW_CHANNEL,
-  name: channelName,
+  channel: channelName,
   messages: messages
 })
 

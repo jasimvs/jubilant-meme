@@ -5,16 +5,20 @@ const messages = (state = [], action) => {
   switch (action.type) {
     case 'ADD_MESSAGE':
     case 'MESSAGE_RECEIVED':
-      return state.concat([
-        {
-          message: action.message,
-          author: action.author,
-          id: action.id,
-          channel: action.channel
-        }
-      ])
+      if (state[0].channel === action.channel)
+        return state.concat([
+          {
+            message: action.message,
+            author: action.author,
+            id: action.id,
+            channel: action.channel
+          }
+        ])
+      else
+        return state
+
     case types.VIEW_CHANNEL:
-      console.log(VIEW_CHANNEL + action.name)
+      console.log(VIEW_CHANNEL + action.channel)
       console.log( action.messages)
       action.messages.map(ms => console.log(ms.message))
       let id = 0
@@ -22,19 +26,9 @@ const messages = (state = [], action) => {
           message: msg.message,
           author: msg.author,
           id: id++,
-          channel: action.name
+          channel: action.channel
       }))
-
-      //messages.push({ message: data.message, author: data.author })
-          //{users: Immutable.List(), messages: Immutable.List()}
-//{
-// message: action.message,
-//     author: action.author,
-//     id: action.id,
-//     channel: action.channel
-// }
-
-        default:
+    default:
       return state
   }
 }

@@ -11,7 +11,7 @@ const AddMessage = (props) => {
       <input
         onKeyPress={(e) => {
         if (e.key === 'Enter') {
-          props.dispatch(input.value, username, 'general')
+          props.dispatch(input.value, username, props.channel)
           input.value = ''
         }
       }}
