@@ -14,6 +14,7 @@ describe('Users reducer', () => {
       })
     ).toEqual([
       {
+          id: 0,
           name: 'Tony'
       }
     ])
@@ -22,6 +23,7 @@ describe('Users reducer', () => {
       users(
         [
           {
+            id: 0,
             name: 'Mark',
           }
         ],
@@ -32,9 +34,11 @@ describe('Users reducer', () => {
       )
     ).toEqual([
       {
+        id: 0,
         name: 'Mark',
       },
       {
+        id: 1,
         name: 'Tony'
       }
     ])

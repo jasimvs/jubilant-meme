@@ -20,7 +20,6 @@ const setupSocket = (dispatch, username) => {
   }
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data)
-      console.log(data)
     switch (data.type) {
       case types.ADD_MESSAGE:
         dispatch(messageReceived(data.message, data.author, data.channel))
@@ -50,22 +49,6 @@ const setupSocket = (dispatch, username) => {
         break
     }
   }
-
-  // socket.onclose = (event) => {
-  //   console.log(event)
-  //   socket = new WebSocket('ws://localhost:8989')
-  // }
-  //
-  // socket.onerror = (event) => {
-  //   console.log(event)
-  //   socket = new WebSocket('ws://localhost:8989')
-  // }
-  //
-  // const getSocket = () => {
-  //   console.log('getSocket')
-  //   return socket
-  // }
-
 
   return socket
 }

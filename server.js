@@ -54,7 +54,6 @@ const addUser = (data, ws) => {
     sockets = sockets.set(ws, data.name)
   }
   let index = 0
-  console.log(users)
   broadcast({
         type: USERS_LIST,
         users: Array.from(users.keys()).map(user => ({ id: index++ , name: user}))
@@ -68,11 +67,7 @@ const addUser = (data, ws) => {
 }
 
 function addMessageToPrivateChat(data) {
-  console.log('private')
   let key = Immutable.Set([data.author, data.channel])
-
-  console.log(Array.from(privateChats.keys()))
-
   let value = privateChats.get(key, privateChatBeginning)
   privateChats = privateChats.set(key, value.push({message: data.message, author: data.author}))
   users.get(data.channel).socket.map(s => {
@@ -84,7 +79,6 @@ function addMessageToPrivateChat(data) {
 }
 
 function addMessageToPublicChannel(data, ws) {
-  console.log('channel')
   let currentUsersAndMessages = channels.get(data.channel)
   let usersAndMessages = currentUsersAndMessages === undefined ?
     {
@@ -100,7 +94,6 @@ function addMessageToPublicChannel(data, ws) {
 }
 
 const addMessage = (data, ws) => {
-  console.log(data)
   if (data.channelType === 'PRIVATE_CHANNEL') {
     addMessageToPrivateChat(data);
   } else {
@@ -113,20 +106,16 @@ const sendUsers = (data, ws) => {
 }
 
 const sendChannels = (data, ws) => {
-  console.log( Array.from(channels.keys()))
   let id = 0
   unicast({type: CHANNELS_LIST, channels: Array.from(channels.keys()).map(ch => ({name: ch, id: id++})) }, ws)
 }
 
 const viewChannel = (data, ws) => {
-  console.log(VIEW_CHANNEL, data, channels)
-  console.log(Array.from(channels.get(data.channel).messages))
   unicast({type: VIEW_CHANNEL, messages: Array.from(channels.get(data.channel).messages), name: data.channel}, ws)
 }
 
 
 const viewChat = (data, ws) => {
-  console.log(VIEW_CHAT, data)
   let key = Immutable.Set([data.name, data.username])
   let value = privateChats.get(key, privateChatBeginning)
 
@@ -139,7 +128,6 @@ const viewChat = (data, ws) => {
 }
 
 const createChannel = (data, ws) => {
-  console.log('create '+ data.name)
   let ch = channels.get(data.name, {users: Immutable.List(data.author),
     messages: Immutable.List([beginningOfChannel(data.name)])})
   channels = channels.set(data.name, ch)
@@ -151,7 +139,6 @@ const createChannel = (data, ws) => {
 }
 
 const joinChannel = (data, ws) => {
-  console.log(data)
   let channel = channels.get(data.channel)
   channels = channels.set(data.channel, {users: channel.users.push(data.author), messages: channel.messages})
   let user = users.get(data.author)
@@ -187,6 +174,7 @@ wss.on('connection', (ws) => {
         break
       case REQUEST_USER_CHAT:
         viewChat(data, ws)
+        break
       default:
         break
     }

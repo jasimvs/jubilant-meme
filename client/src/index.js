@@ -13,7 +13,6 @@ import { handleNewMessage, handleNewChannel, handleChannelChange } from './sagas
 import setupSocket from './sockets'
 
 const username = prompt("Enter name");
-console.log("usrname",username);
 
 const sagaMiddleware = createSagaMiddleware()
 

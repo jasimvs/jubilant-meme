@@ -7,7 +7,8 @@ import Sidebar from './Sidebar'
 const setup = () => {
   const props = {
     users: [],
-    addUser: jest.fn()
+    addUser: jest.fn(),
+    dispatch: () => {}
   }
   Enzyme.configure({ adapter: new Adapter() })
   const enzymeWrapper = mount(<Sidebar {...props} />)

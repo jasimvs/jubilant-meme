@@ -8,7 +8,6 @@ import { CreateChannel } from "./containers/CreateChannel"
 
 class App extends Component {
   render() {
-    console.log(this.props); 
     const username = this.props.username;
     return (
       <div id="container">

@@ -6,7 +6,8 @@ import MessagesList from './MessagesList'
 
 const setup = () => {
   const props = {
-    messages: []
+    messages: {messages: []},
+    channel: ''
   }
   Enzyme.configure({ adapter: new Adapter() })
   const enzymeWrapper = mount(<MessagesList {...props} />)
