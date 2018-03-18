@@ -15,7 +15,8 @@ const ChannelsSidebar = (props) => {
             {console.log('3ChannelsSidebar')}
             {console.log(props)}{props.channels.map(channel => (
                 <li key={channel.id} >
-                  <a href='#' onClick={() => onclick(channel.name)}>{channel.name}</a></li>
+                  <a href='#' onClick={() => onclick(channel.name)}>{channel.name}</a>
+                </li>
             ))}
         </ul>
     </aside>

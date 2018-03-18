@@ -5,17 +5,22 @@ const Immutable = require('immutable')
 const wss = new WebSocket.Server({ port: 8989 })
 
 // Map[user, {Option(socket), channels}]
-let users = new Immutable.Map([])
+let users = Immutable.Map([])
 
-const beginningOfChanel = (name) => ({ message: 'beginning of '+ name + ' :', author: '' })
+const beginningOfChannel = (name) => ({ message: 'beginning of '+ name + ' :', author: '' })
+const privateChatBeginning = Immutable.List([{ message: 'beginning of private chat :', author: '' }])
+
 // Map[channel, {users, messages}]
-let channels = new Immutable.Map([
-    ['general', {users: Immutable.List(), messages: Immutable.List([beginningOfChanel('general')])}],
-    ['react', {users: Immutable.List(), messages: Immutable.List([beginningOfChanel('react')])}]
+let channels = Immutable.Map([
+    ['general', {users: Immutable.List(), messages: Immutable.List([beginningOfChannel('general')])}],
+    ['react', {users: Immutable.List(), messages: Immutable.List([beginningOfChannel('react')])}]
 ])
 
+let privateChats = Immutable.Map([Immutable.Set(), Immutable.List()])
+//[{ message: 'beginning of private chat :'}]
+
 //Map[socket, user]
-let sockets = new Immutable.Map([])
+let sockets = Immutable.Map([])
 
 const ADD_MESSAGE = 'ADD_MESSAGE'
 const ADD_USER = 'ADD_USER'
@@ -24,6 +29,8 @@ const CHANNELS_LIST = 'CHANNELS_LIST'
 const CREATE_CHANNEL = 'CREATE_CHANNEL'
 const JOIN_CHANNEL = 'JOIN_CHANNEL'
 const VIEW_CHANNEL = 'VIEW_CHANNEL'
+const VIEW_CHAT = 'VIEW_CHAT'
+const REQUEST_USER_CHAT = 'REQUEST_USER_CHAT'
 
 const broadcast = (data, ws) => {
     wss.clients.forEach((client) => {
@@ -39,8 +46,8 @@ const unicast = (data, ws) => {
 }
 
 const addUser = (data, ws) => {
-  let existingChannels = users.get(data.name)
-  let subscribedChannels = existingChannels === undefined ? Immutable.List : existingChannels
+  let existingChannels = users.get(data.name, {channels: Immutable.List()}).channels
+  let subscribedChannels = existingChannels.push(data.name)
   let opt = Option.Option(ws)
   if (data.name !== null) {
     users = users.set(data.name, {socket: opt, channels: subscribedChannels})
@@ -60,16 +67,45 @@ const addUser = (data, ws) => {
 
 }
 
-const addMessage = (data, ws) => {
-  console.log(data.channel)
+function addMessageToPrivateChat(data) {
+  console.log('private')
+  let key = Immutable.Set([data.author, data.channel])
+
+  console.log(Array.from(privateChats.keys()))
+
+  let value = privateChats.get(key, privateChatBeginning)
+  privateChats = privateChats.set(key, value.push({message: data.message, author: data.author}))
+  users.get(data.channel).socket.map(s => {
+    if (data.channel !== data.author) {
+      data.channel = data.author
+      unicast(data, s)
+    }
+  })
+}
+
+function addMessageToPublicChannel(data, ws) {
+  console.log('channel')
   let currentUsersAndMessages = channels.get(data.channel)
   let usersAndMessages = currentUsersAndMessages === undefined ?
-      { users: Immutable.List(data.author), messages:
-          Immutable.List([beginningOfChanel(data.channel), { message: data.message, author: data.author }])} :
-      { users: currentUsersAndMessages.users,
-        messages: currentUsersAndMessages.messages.push({ message: data.message, author: data.author })}
+    {
+      users: Immutable.List(data.author), messages:
+        Immutable.List([beginningOfChannel(data.channel), {message: data.message, author: data.author}])
+    } :
+    {
+      users: currentUsersAndMessages.users,
+      messages: currentUsersAndMessages.messages.push({message: data.message, author: data.author})
+    }
   channels = channels.set(data.channel, usersAndMessages)
   broadcast(data, ws)
+}
+
+const addMessage = (data, ws) => {
+  console.log(data)
+  if (data.channelType === 'PRIVATE_CHANNEL') {
+    addMessageToPrivateChat(data);
+  } else {
+    addMessageToPublicChannel(data, ws);
+  }
 }
 
 const sendUsers = (data, ws) => {
@@ -83,17 +119,29 @@ const sendChannels = (data, ws) => {
 }
 
 const viewChannel = (data, ws) => {
-  console.log(VIEW_CHANNEL)
-  console.log(data)
-  console.log(channels)
-    console.log(Array.from(channels.get(data.channel).messages))
-    unicast({type: VIEW_CHANNEL, messages: Array.from(channels.get(data.channel).messages), name: data.channel}, ws)
+  console.log(VIEW_CHANNEL, data, channels)
+  console.log(Array.from(channels.get(data.channel).messages))
+  unicast({type: VIEW_CHANNEL, messages: Array.from(channels.get(data.channel).messages), name: data.channel}, ws)
+}
+
+
+const viewChat = (data, ws) => {
+  console.log(VIEW_CHAT, data)
+  let key = Immutable.Set([data.name, data.username])
+  let value = privateChats.get(key, privateChatBeginning)
+
+  unicast({
+    type: VIEW_CHAT,
+    name: data.name,
+    username: data.username,
+    messages: Array.from(value)
+  }, ws)
 }
 
 const createChannel = (data, ws) => {
   console.log('create '+ data.name)
   let ch = channels.get(data.name, {users: Immutable.List(data.author),
-    messages: Immutable.List([beginningOfChanel(data.name)])})
+    messages: Immutable.List([beginningOfChannel(data.name)])})
   channels = channels.set(data.name, ch)
   let id = 0
   broadcast({
@@ -137,6 +185,8 @@ wss.on('connection', (ws) => {
       case VIEW_CHANNEL:
         viewChannel(data, ws)
         break
+      case REQUEST_USER_CHAT:
+        viewChat(data, ws)
       default:
         break
     }

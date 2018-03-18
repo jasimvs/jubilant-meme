@@ -3,7 +3,7 @@ import * as types from '../constants/ActionTypes'
 
 const handleNewMessage = function* handleNewMessage(params) {
   yield takeEvery(types.ADD_MESSAGE, (action) => {
-    console.log('handleNewMessage', params)
+    console.log('handleNewMessage', action)
     action.author = params.username
     params.socket.send(JSON.stringify(action))
   })
@@ -27,7 +27,15 @@ const handleChannelChange = function* handleChannelChange(params) {
       channel: action.name
     }))
   })
+  yield takeEvery(types.REQUEST_USER_CHAT, (action) => {
+    console.log('handleChannelChange', action, params)
+    action.author = params.username
+    params.socket.send(JSON.stringify({
+      type: types.REQUEST_USER_CHAT,
+      name: action.name,
+      username: action.username
+    }))
+  })
 }
-
 
 export { handleNewChannel, handleNewMessage, handleChannelChange }

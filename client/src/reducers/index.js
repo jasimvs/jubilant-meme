@@ -2,13 +2,11 @@ import { combineReducers } from "redux"
 import messages from "./messages"
 import users from "./users"
 import channels from "./channels"
-import channel from "./channel"
 
 const chat = combineReducers({
-    users,
-    messages,
-    channels,
-    channel
+  users,
+  messages,
+  channels
 });
 
 export default chat

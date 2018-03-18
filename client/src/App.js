@@ -13,7 +13,7 @@ class App extends Component {
     return (
       <div id="container">
         <section id="side">
-          <Sidebar />
+          <Sidebar username={username}/>
         </section>
         <section id="main">
           <MessagesList />

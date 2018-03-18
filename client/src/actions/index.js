@@ -4,12 +4,13 @@ let nextMessageId = 0
 let nextUserId = 1
 let nextChannelId = 1
 
-export const addMessage = (message, author, channel) => ({
+export const addMessage = (message, author, channel, channelType) => ({
   type: types.ADD_MESSAGE,
   id: nextMessageId + 1,
   message,
   author,
-  channel
+  channel,
+  channelType
 })
 
 export const createChannel = (author, name) => ({
@@ -30,9 +31,22 @@ export const requestChannelMessages = (channelName) => ({
   name: channelName
 })
 
+export const requestUserChat = (name, username) => ({
+  type: types.REQUEST_USER_CHAT,
+  name: name,
+  username: username,
+})
+
 export const viewChannel = (channelName, messages) => ({
   type: types.VIEW_CHANNEL,
   channel: channelName,
+  messages: messages
+})
+
+export const viewChat = (name, username, messages) => ({
+  type: types.VIEW_CHAT,
+  name: name,
+  username: username,
   messages: messages
 })
 

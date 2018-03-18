@@ -6,7 +6,8 @@ const MessagesList = (data) => (
   <section id="messages-list">
     <h2>{data.channel}</h2>
     <ul>
-    {data.messages.map(message => (
+      {console.log('MessagesList', data.messages)}
+      {data.messages.messages.map(message => (
       <Message
       key={message.id}
       {...message}

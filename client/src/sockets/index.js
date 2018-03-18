@@ -1,8 +1,9 @@
 import * as types from '../constants/ActionTypes'
-import { addUser, messageReceived, populateUsersList, createChannel, viewChannel, joinChannel, populateChannelsList } from '../actions'
+import { addUser, messageReceived, populateUsersList, createChannel, viewChannel, joinChannel,
+  populateChannelsList, viewChat } from '../actions'
 
 const setupSocket = (dispatch, username) => {
-  const socket = new WebSocket('ws://localhost:8989')
+  let socket = new WebSocket('ws://localhost:8989')
 
   socket.onopen = () => {
     socket.send(JSON.stringify({
@@ -42,14 +43,29 @@ const setupSocket = (dispatch, username) => {
       case types.JOIN_CHANNEL:
         dispatch(joinChannel((data.author, data.name)))
         break
+      case types.VIEW_CHAT:
+        dispatch(viewChat((data.name, data.username, data.messages)))
+        break;
       default:
         break
     }
   }
 
-  socket.onclose = (event) => {
+  // socket.onclose = (event) => {
+  //   console.log(event)
+  //   socket = new WebSocket('ws://localhost:8989')
+  // }
+  //
+  // socket.onerror = (event) => {
+  //   console.log(event)
+  //   socket = new WebSocket('ws://localhost:8989')
+  // }
+  //
+  // const getSocket = () => {
+  //   console.log('getSocket')
+  //   return socket
+  // }
 
-  }
 
   return socket
 }
