@@ -9,3 +9,5 @@ To run, install docker, cd into the folder and run:
 
 Launch http://localhost:3000/ in browser. Launch multiple to test chatting.
 
+To run tests use ```yarn test```
+
